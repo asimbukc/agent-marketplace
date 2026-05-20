@@ -236,7 +236,7 @@ export default function PropertyDetail() {
 
             <div className="flex gap-2">
               <Link 
-                to={`/chat?target=${property.owner?.username || 'admin'}`} 
+                to={`/chat?target=${property.owner?._id || 'admin'}`} 
                 className="font-nunito flex-grow bg-primary hover:bg-primary-600 text-black py-4 rounded-sm font-bold flex items-center justify-center gap-2 transition-all text-[11px] uppercase tracking-widest"
               >
                 <MessageSquare className="w-4 h-4" />

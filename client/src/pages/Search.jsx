@@ -302,7 +302,7 @@ export default function Search() {
                             className={`w-3.5 h-3.5 ${userBookmarks.includes(property._id) ? 'fill-primary' : ''}`} 
                           />
                         </button>
-                        <Link to={`/chat?target=${property.owner?.username || 'admin'}`} className="p-1.5 rounded-sm border border-white/5 hover:border-primary/50 text-gray-500 hover:text-primary transition-all">
+                        <Link to={`/chat?target=${property.owner?._id || 'admin'}`} className="p-1.5 rounded-sm border border-white/5 hover:border-primary/50 text-gray-500 hover:text-primary transition-all">
                           <MessageSquare className="w-3.5 h-3.5" />
                         </Link>
                       </div>

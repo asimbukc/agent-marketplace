@@ -25,7 +25,7 @@ export default function Chat() {
     }
 
     const query = new URLSearchParams(location.search);
-    const targetUsername = query.get('target');
+    const targetuserid = query.get('target');
 
     let isMounted = true;
 
@@ -46,14 +46,14 @@ export default function Chat() {
         if (!isMounted) return;
         setChats(chatsData);
 
-        if (targetUsername) {
+        if (targetuserid) {
           const accessRes = await fetch('/api/chats/access', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ username: targetUsername }),
+            body: JSON.stringify({ userId: targetuserid }),
           });
           if (accessRes.ok && isMounted) {
             const chatObj = await accessRes.json();
@@ -129,6 +129,8 @@ export default function Chat() {
     };
 
     socket?.emit('send_message', messageData);
+    setMessages(prev => [...prev, messageData]);
+    
 
     const token = localStorage.getItem('token');
     try {

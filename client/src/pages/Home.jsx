@@ -15,7 +15,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-20 pb-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="flex flex-col lg:flex-row items-start gap-16">
               {/* Left Content */}
               <div className="w-full lg:w-3/5">
                 <motion.div

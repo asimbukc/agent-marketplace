@@ -21,27 +21,50 @@ export default function PropertyDetail() {
   const [property, setProperty] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+ const [currentUserId, setCurrentUserId] = useState(null);
 
-  useEffect(() => {
-    const fetchProperty = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch(`/api/properties/${id}`);
-        if (!response.ok) {
-           throw new Error(response.status === 404 ? 'Property not found' : `Error ${response.status}`);
-        }
-        const data = await response.json();
-        setProperty(data);
-      } catch (err) {
-        console.error("Error fetching property:", err);
-        setError(err.message || 'Failed to connect to server');
-      } finally {
-        setIsLoading(false);
+useEffect(() => {
+  const fetchProperty = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`/api/properties/${id}`);
+      if (!response.ok) {
+        throw new Error(response.status === 404 ? 'Property not found' : `Error ${response.status}`);
       }
-    };
-    fetchProperty();
-  }, [id]);
+      const data = await response.json();
+      setProperty(data);
+    } catch (err) {
+      console.error('Error fetching property:', err);
+      setError(err.message || 'Failed to connect to server');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchUser = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const res = await fetch('/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCurrentUserId(data._id);
+      }
+    } catch (err) {
+      console.error('Error fetching user:', err);
+    }
+  };
+
+  fetchProperty();
+  fetchUser();
+}, [id]);
 
   if (isLoading) {
     return (
@@ -235,13 +258,26 @@ export default function PropertyDetail() {
             </div>
 
             <div className="flex gap-2">
-              <Link 
-                to={`/chat?target=${property.owner?._id || 'admin'}`} 
-                className="font-nunito flex-grow bg-primary hover:bg-primary-600 text-black py-4 rounded-sm font-bold flex items-center justify-center gap-2 transition-all text-[11px] uppercase tracking-widest"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Contact Owner
-              </Link>
+<Link
+  to={
+    property.owner?._id === currentUserId
+      ? '#'
+      : `/chat?target=${property.owner?._id || 'admin'}`
+  }
+  onClick={(e) => {
+    if (property.owner?._id === currentUserId) {
+      e.preventDefault();
+    }
+  }}
+  className={`font-nunito flex-grow py-4 rounded-sm font-bold flex items-center justify-center gap-2 transition-all text-[11px] uppercase tracking-widest ${
+    property.owner?._id === currentUserId
+      ? 'bg-neutral-800 text-gray-600 cursor-not-allowed opacity-50'
+      : 'bg-primary hover:bg-primary-600 text-black'
+  }`}
+>
+  <MessageSquare className="w-4 h-4" />
+  Contact Owner
+</Link>
               <button className="font-nunito bg-neutral-900 border border-white/10 hover:border-primary/50 text-white px-5 rounded-sm transition-all">
                 <Bookmark className="w-5 h-5" />
               </button>

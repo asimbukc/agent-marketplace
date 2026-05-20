@@ -24,6 +24,7 @@ export default function Search() {
   const [isLoading, setIsLoading] = useState(true);
   const [isBookmarking, setIsBookmarking] = useState(null);
   const [error, setError] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const [filters, setFilters] = useState({
     location: '',
     type: 'any',
@@ -42,6 +43,7 @@ export default function Search() {
       if (res.ok) {
         const data = await res.json();
         setUserBookmarks(data.bookmarks || []);
+        setCurrentUserId(data._id);
       }
     } catch (err) {
       console.error("Error fetching user data:", err);
@@ -302,9 +304,25 @@ export default function Search() {
                             className={`w-3.5 h-3.5 ${userBookmarks.includes(property._id) ? 'fill-primary' : ''}`} 
                           />
                         </button>
-                        <Link to={`/chat?target=${property.owner?._id || 'admin'}`} className="p-1.5 rounded-sm border border-white/5 hover:border-primary/50 text-gray-500 hover:text-primary transition-all">
-                          <MessageSquare className="w-3.5 h-3.5" />
-                        </Link>
+                <Link
+  to={
+    property.owner?._id === currentUserId
+      ? '#'
+      : `/chat?target=${property.owner?._id || 'admin'}`
+  }
+  onClick={(e) => {
+    if (property.owner?._id === currentUserId) {
+      e.preventDefault();
+    }
+  }}
+  className={`p-1.5 rounded-sm border transition-all ${
+    property.owner?._id === currentUserId
+      ? 'border-white/5 text-gray-700 opacity-50 cursor-not-allowed'
+      : 'border-white/5 hover:border-primary/50 text-gray-500 hover:text-primary'
+  }`}
+>
+  <MessageSquare className="w-3.5 h-3.5" />
+</Link>
                       </div>
                     </div>
                   </div>
